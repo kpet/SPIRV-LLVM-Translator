@@ -1501,7 +1501,7 @@ Value *SPIRVToLLVM::transValueWithoutDecoration(SPIRVValue *BV, Function *F,
     StoreInst *SI = new StoreInst(
         transValue(BS->getSrc(), F, BB), transValue(BS->getDst(), F, BB),
         BS->SPIRVMemoryAccess::isVolatile(),
-        MaybeAlign(BS->SPIRVMemoryAccess::getAlignment()), BB);
+        MaybeAlign(BS->SPIRVMemoryAccess::getAlignment()).valueOrOne().value(), BB);
     if (BS->SPIRVMemoryAccess::isNonTemporal())
       transNonTemporalMetadata(SI);
     return mapValue(BV, SI);
@@ -1512,7 +1512,7 @@ Value *SPIRVToLLVM::transValueWithoutDecoration(SPIRVValue *BV, Function *F,
     LoadInst *LI =
         new LoadInst(transValue(BL->getSrc(), F, BB), BV->getName(),
                      BL->SPIRVMemoryAccess::isVolatile(),
-                     MaybeAlign(BL->SPIRVMemoryAccess::getAlignment()), BB);
+                     MaybeAlign(BL->SPIRVMemoryAccess::getAlignment()).valueOrOne().value(), BB);
     if (BL->SPIRVMemoryAccess::isNonTemporal())
       transNonTemporalMetadata(LI);
     return mapValue(BV, LI);
